@@ -1,0 +1,17 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'libass'
+    version = '0.10.0'
+    licenses = [License.BSD_like]
+    deps = ['freetype', 'fontconfig', 'libpng', 'fribidi']
+    make_check = None
+    autoreconf = True
+
+    files_libs = ['libass']
+    files_devel = ['include/ass', 'lib/pkgconfig/libass.pc']
+
+    def prepare(self):
+        if self.config.target_platform == Platform.ANDROID:
+            self.autoreconf = True

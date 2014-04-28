@@ -1,0 +1,12 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+class Recipe(recipe.Recipe):
+    name = 'json-glib'
+    version = '0.14.2'
+    licenses = [License.LGPLv2_1Plus]
+    deps = ['glib']
+    configure_options = '--enable-static'
+
+    files_libs = ['libjson-glib-1.0']
+    files_devel  = ['include/json-glib-1.0', 'lib/pkgconfig/json-glib-1.0.pc']
+    autoreconf = True

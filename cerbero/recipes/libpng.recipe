@@ -1,0 +1,12 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'libpng'
+    version = '1.5.12'
+    licenses = [License.LibPNG]
+    deps = ['zlib']
+
+    files_libs = ['libpng15']
+    files_devel = ['include/libpng15', 'bin/libpng15-config',
+                   'lib/pkgconfig/libpng15.pc', 'lib/pkgconfig/libpng.pc']

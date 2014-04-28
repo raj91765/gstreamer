@@ -1,0 +1,15 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+class Recipe(recipe.Recipe):
+    name = 'fribidi'
+    version = '0.19.6'
+    stype = SourceType.TARBALL
+    url = 'http://fribidi.org/download/fribidi-%(version)s.tar.bz2'
+    licenses = [License.LGPLv2_1Plus]
+    autoreconf = True
+    deps = ['glib']
+    patches = ['fribidi-win32-missing-symbols.patch']
+
+    files_libs = ['libfribidi']
+    files_bins = ['fribidi']
+    files_devel = ['lib/pkgconfig/fribidi.pc', 'include/fribidi']

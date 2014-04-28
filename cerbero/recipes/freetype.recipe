@@ -1,0 +1,15 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'freetype'
+    version = '2.4.10'
+    licenses = [License.FreeType]
+    configure_tpl = "%(config-sh)s --prefix=%(prefix)s --libdir=%(libdir)s"
+
+    files_libs = ['libfreetype']
+    files_devel = ['bin/freetype-config',
+                   'lib/pkgconfig/freetype2.pc',
+                   'include/ft2build.h',
+                   'include/freetype2',
+                   'share/aclocal/freetype2.m4']

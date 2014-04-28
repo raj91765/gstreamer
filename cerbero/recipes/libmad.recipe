@@ -1,0 +1,26 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+class Recipe(recipe.Recipe):
+    name = 'libmad'
+    version = '0.15.1b'
+    licenses = [License.GPLv2]
+
+    files_libs = ['libmad']
+    files_devel = ['include/mad.h']
+
+    def prepare(self):
+        if self.config.target_platform == Platform.IOS:
+            self.autoreconf = True
+            self.configure_options += ' --enable-fpm=default '
+            self.new_env['CCAS'] = os.environ['GAS']
+            self.new_env['CCASFLAGS'] = '-no-integrated-as'
+        if self.config.target_platform == Platform.LINUX:
+            if self.config.target_arch in [Architecture.ARM, Architecture.ARMv7]:
+            	self.configure_options += ' --enable-fpm=default '
+        if self.config.target_platform == Platform.ANDROID:
+            self.autoreconf = True
+            if self.config.target_arch == Architecture.ARM or self.config.target_arch == Architecture.ARMv7:
+                # Disable thumb mode to get the optimizations compiled properly
+                self.new_env['CFLAGS'] = os.environ['CFLAGS'].replace('-mthumb', '')
+            if self.config.target_arch == Architecture.X86:
+                self.new_env['CFLAGS'] = os.environ['CFLAGS'] + ' -fno-stack-protector'

@@ -1,0 +1,22 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'autoconf'
+    version = '2.68'
+    licenses = [License.GPLv2]
+    stype = SourceType.TARBALL
+    url = 'http://ftp.gnu.org/gnu/autoconf/autoconf-2.68.tar.xz'
+    deps = ['m4']
+
+    files_bin = [
+        'bin/autoconf', 'bin/autoheader',
+        'bin/autom4te', 'bin/autoreconf',
+        'bin/autoscan', 'bin/autoupdate',
+        'bin/ifnames']
+
+    files_share = ['share/autoconf']
+
+    def prepare(self):
+        if self.config.target_platform == Platform.WINDOWS:
+            self.deps.remove('m4')

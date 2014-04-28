@@ -1,0 +1,36 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+import os
+
+class Recipe(recipe.Recipe):
+    name = 'fontconfig'
+    version = '2.10.1'
+    licenses = [License.MIT]
+    configure_options = '--disable-docs'
+    deps = ['expat', 'freetype', 'zlib', 'bzip2']
+
+    files_libs = ['libfontconfig']
+    files_etc = [
+        'etc/fonts/conf.d',
+        'etc/fonts/fonts.conf',
+        'share/fontconfig'
+        ]
+    files_devel = ['lib/pkgconfig/fontconfig.pc', 'include/fontconfig']
+
+    def prepare(self):
+        if self.config.target_platform == Platform.WINDOWS:
+            if self.config.target_arch == Architecture.X86_64:
+                self.configure_options = '--with-arch=x86_64'
+            else:
+                self.configure_options = '--with-arch=i686'
+
+    def post_install(self):
+        # Create relative symlinks to prevent breakage during packaging
+        if self.config.target_platform != Platform.WINDOWS:
+            confddir = os.path.join(self.config.prefix, 'etc', 'fonts', 'conf.d')
+            linksrc = os.path.join('..', '..', '..', 'share', 'fontconfig', 'conf.avail')
+            for f in os.listdir(confddir):
+                if not f.endswith('.conf'):
+                    continue
+                os.remove(os.path.join(confddir, f))
+                os.symlink(os.path.join(linksrc, f), os.path.join(confddir, f))

@@ -1,0 +1,90 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(custom.GStreamerStatic):
+    name = 'gst-plugins-base-1.0-static'
+    version = '1.0'
+    gstreamer_version = '1.0'
+    licenses = [License.LGPLv2Plus]
+    extra_configure_options = "--enable-static"
+    commit = 'upstream/1.0'
+    deps = ['glib', 'gstreamer-1.0', 'libxml2', 'libogg', 'pango', 'libtheora',
+            'libvisual', 'libvorbis', 'zlib', 'orc']
+    platform_deps = { Platform.LINUX: [ 'cdparanoia' ], Platform.ANDROID: [ 'tremor' ], Platform.IOS: [ 'tremor' ] }
+    use_system_libs = True
+
+    files_plugins_core_devel = [
+             'libgstadder',
+             'libgstapp',
+             'libgstaudioconvert',
+             'libgstaudiorate',
+             'libgstaudioresample',
+             'libgstaudiotestsrc',
+             'libgstgio',
+             'libgstpango',
+             'libgsttypefindfunctions',
+             'libgstvideoconvert',
+             'libgstvideorate',
+             'libgstvideoscale',
+             'libgstvideotestsrc',
+             'libgstvolume',
+    ]
+
+    files_plugins_playback_devel = [
+             'libgstplayback',
+            ]
+
+    # Not used currently
+    files_plugins_encoding_devel = [
+             'libgstencodebin',
+            ]
+
+    files_plugins_codecs_devel = [
+             'libgstsubparse',
+             'libgstogg',
+             'libgsttheora',
+             'libgstvorbis',
+            ]
+
+    files_plugins_vis_devel = [
+             'libgstlibvisual',
+            ]
+
+    files_plugins_net_devel = [
+            'libgsttcp',
+    ]
+
+    platform_files_plugins_codecs_devel = {
+        Platform.ANDROID: [
+             'libgstivorbisdec',
+            ],
+        Platform.IOS: [
+             'libgstivorbisdec',
+            ]
+    }
+
+    platform_files_plugins_sys_devel = {
+        Platform.LINUX: [
+             'libgstalsa',
+             'libgstximagesink',
+             'libgstxvimagesink',
+             'libgstcdparanoia',
+            ]
+    }
+
+    def prepare(self):
+        self.append_env['CFLAGS'] = " -Wno-error "
+        self.append_env['CXXFLAGS'] = " -Wno-error "
+        self.append_env['CPPFLAGS'] = " -Wno-error "
+        if self.config.target_platform != Platform.LINUX:
+            self.configure_options += '--disable-gtk-doc '
+        if self.config.target_platform in [Platform.ANDROID, Platform.IOS]:
+            self.configure_options += ' --disable-alsa --disable-x'
+        if self.config.variants.nodebug:
+            self.configure_options += ' --disable-gst-debug'
+
+        custom.GStreamerStatic.prepare(self)
+
+        self.remotes['origin'] = ('%s/%s' % ('git://anongit.freedesktop.org/gstreamer', 'gst-plugins-base'))
+        self.remotes['upstream'] = self.remotes['origin']
+

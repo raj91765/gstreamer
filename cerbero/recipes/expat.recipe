@@ -1,0 +1,10 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'expat'
+    version = '2.1.0'
+    licenses = [License.BSD_like]
+
+    files_libs = ['libexpat']
+    files_devel = ['include/expat.h', 'include/expat_external.h', 'lib/pkgconfig/expat.pc']

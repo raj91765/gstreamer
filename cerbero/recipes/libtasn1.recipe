@@ -1,0 +1,9 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+class Recipe(recipe.Recipe):
+    name = 'libtasn1'
+    version = '2.13'
+    licenses = [License.LGPLv2_1Plus]
+
+    files_libs = ['libtasn1']
+    files_devel = ['include/libtasn1.h', 'lib/pkgconfig/libtasn1.pc']

@@ -1,0 +1,51 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+from cerbero.tools.libtool import LibtoolLibrary
+
+
+class Recipe(recipe.Recipe):
+    name = 'bzip2'
+    version = '1.0.6'
+    licenses = [License.BSD_like]
+
+    files_libs = ['libbz2']
+    files_devel = ['include/bzlib.h']
+
+
+    def prepare (self):
+        self._remove_steps([BuildSteps.CONFIGURE])
+        extension = ''
+        if self.config.target_platform in [Platform.DARWIN, Platform.IOS]:
+            shared_makefile = 'Makefile-libbz2_dylib'
+        elif self.config.target_platform == Platform.WINDOWS:
+            shared_makefile = 'Makefile-libbz2_dll'
+            extension = '.exe'
+        else:
+            shared_makefile = 'Makefile-libbz2_so'
+        self.make = 'make -f %s; make EXT=%s' % (shared_makefile, extension)
+        self.make_install = 'make -f %s install PREFIX=%s; make install EXT=%s PREFIX=%s' % \
+                (shared_makefile, self.config.prefix, extension, self.config.prefix)
+
+    def post_install(self):
+        libtool_la = LibtoolLibrary('bz2', 1, 0, 6, self.config.libdir,
+                self.config.target_platform)
+        libtool_la.save()
+        if self.config.target_platform in [Platform.LINUX, Platform.ANDROID]:
+            libdir = os.path.join(self.config.prefix, 'lib')
+            libbz2 = os.path.join(libdir, 'libbz2.so')
+            if os.path.exists (libbz2):
+                os.remove (libbz2)
+            os.symlink(os.path.join(libdir, 'libbz2.so.1.0.6'), libbz2)
+        elif self.config.target_platform == Platform.DARWIN:
+            libdir = os.path.join(self.config.prefix, 'lib')
+            libbz2 = os.path.join(libdir, 'libbz2.dylib')
+            try:
+                os.symlink(os.path.join(libdir, 'libbz2.1.0.6.dylib'), libbz2)
+            except OSError:
+                pass
+        elif self.config.target_platform == Platform.IOS:
+            # FIXME This is to workaround a build issue, trying to ld ti libbz2.so
+            try:
+                os.symlink(os.path.join (self.config.prefix, 'lib', 'libbz2.dylib'),
+                        os.path.join (self.config.prefix, 'lib', 'libbz2.so'))
+            except OSError:
+                pass

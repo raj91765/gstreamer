@@ -1,0 +1,30 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'gnutls'
+    version = '3.0.22'
+    # main library is LGPLv3+ and binaries and libgnutls-openssl are
+    # GPLv3+ and defined below
+    licenses = [License.LGPLv3Plus]
+    configure_options = "--enable-local-libopts --disable-guile"
+    deps = ['zlib', 'nettle', 'libtasn1']
+
+    files_libs = ['libgnutls', 'libgnutlsxx']
+    files_libs_extra = ['libgnutls-openssl']
+    licenses_libs_extra = [License.GPLv3]
+    files_bins = ['gnutls-cli', 'gnutls-serv', 'gnutls-cli-debug']
+    licenses_bins = [License.GPLv3]
+    files_devel = ['lib/pkgconfig/gnutls.pc', 'include/gnutls']
+    files_lang = ['gnutls']
+
+    def prepare(self):
+        if self.config.target_platform == Platform.WINDOWS:
+            self.configure_options += ' --enable-threads=win32'
+            self.can_use_configure_cache = False
+        if self.config.target_platform == Platform.DARWIN:
+            self.configure_options += ' --disable-hardware-acceleration'
+        if self.config.target_platform == Platform.ANDROID:
+            self.configure_options += ' --disable-cxx'
+        if self.config.target_platform == Platform.IOS:
+            self.configure_options += ' --disable-cxx'
